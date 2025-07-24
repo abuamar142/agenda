@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agenda/core/network/network_client.dart';
-import 'package:agenda/core/network/network_info.dart';
+
+import '../network/network_client.dart';
+import '../network/network_info.dart';
 
 class DependencyInjection {
-  static Future<void> init() async {
+  static Future<void> setup() async {
     // Core dependencies
-    Get.lazyPut<NetworkClient>(() => NetworkClient(), fenix: true);
+    Get.lazyPut<NetworkClient>(() => NetworkClient.instance, fenix: true);
     Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(), fenix: true);
 
     // SharedPreferences

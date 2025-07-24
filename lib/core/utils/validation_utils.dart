@@ -89,7 +89,7 @@ class ValidationUtils {
     return null;
   }
 
-    // Get event description validation error message
+  // Get event description validation error message
   static String? getEventDescriptionError(String description) {
     if (!isValidEventDescription(description)) {
       return 'Description must be less than 1000 characters';

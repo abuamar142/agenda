@@ -1,48 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'app_routes.dart';
-import 'core/themes/app_theme.dart';
-import 'core/constants/app_constants.dart';
 import 'core/config/env_config.dart';
-import 'core/network/network_client.dart';
 import 'core/di/dependency_injection.dart';
+import 'core/routes/app_routes.dart';
+import 'core/themes/app_theme.dart';
+import 'core/utils/app_logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
-  // Validate configuration
-  EnvConfig.validateConfig();
-  
-  // Initialize dependencies
-  await DependencyInjection.init();
-  
-  // Initialize Supabase
-  await Supabase.initialize(
-    url: AppConstants.supabaseUrl,
-    anonKey: AppConstants.supabaseAnonKey,
-  );
 
-  // Initialize Network Client
-  NetworkClient().init(
-    supabaseUrl: AppConstants.supabaseUrl,
-    supabaseAnonKey: AppConstants.supabaseAnonKey,
-  );
+  try {
+    AppLogger.i('🚀 Starting application...');
 
-  runApp(const MyApp());
-}class MyApp extends StatelessWidget {
+    // Load environment variables
+    AppLogger.d('📁 Loading environment variables...');
+    await dotenv.load(fileName: ".env");
+
+    // Initialize Supabase
+    AppLogger.d('🔧 Initializing Supabase...');
+    await Supabase.initialize(
+      url: EnvConfig.supabaseUrl,
+      anonKey: EnvConfig.supabaseAnonKey,
+    );
+    AppLogger.i('✅ Supabase initialized successfully');
+
+    // Setup dependency injection
+    AppLogger.d('🔧 Setting up dependency injection...');
+    await DependencyInjection.setup();
+    AppLogger.i('✅ Dependency injection setup completed');
+
+    AppLogger.i('🎉 Application initialization completed');
+    runApp(const MyApp());
+  } catch (error, stackTrace) {
+    AppLogger.e('💥 Failed to initialize application', error, stackTrace);
+    rethrow;
+  }
+}
+
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.d('🎨 Building MyApp widget');
+
     return GetMaterialApp(
+      title: 'Agenda',
       debugShowCheckedModeBanner: false,
-      title: AppConstants.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

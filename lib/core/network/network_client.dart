@@ -1,43 +1,57 @@
 import 'package:dio/dio.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
+
+import 'dio_logger_interceptor.dart';
 
 class NetworkClient {
-  static final NetworkClient _instance = NetworkClient._internal();
-  factory NetworkClient() => _instance;
-  NetworkClient._internal();
+  static NetworkClient? _instance;
+  static NetworkClient get instance => _instance ??= NetworkClient._internal();
 
   late final Dio _dio;
-  late final SupabaseClient _supabaseClient;
 
-  void init({
-    required String supabaseUrl,
-    required String supabaseAnonKey,
-    String? baseUrl,
-  }) {
-    // Initialize Dio
+  NetworkClient._internal() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl ?? '',
-        connectTimeout: const Duration(milliseconds: 30000),
-        receiveTimeout: const Duration(milliseconds: 30000),
-        headers: {'Content-Type': 'application/json'},
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       ),
     );
 
     // Add interceptors
+    _dio.interceptors.add(DioLoggerInterceptor());
+
+    // Add timing interceptor
     _dio.interceptors.add(
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        requestHeader: true,
-        responseHeader: false,
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          options.extra['start_time'] = DateTime.now();
+          handler.next(options);
+        },
       ),
     );
 
-    // Initialize Supabase
-    _supabaseClient = Supabase.instance.client;
+    // Hanya tambahkan debug interceptor di development
+    if (kDebugMode) {
+      _dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          requestHeader: false,
+          responseHeader: false,
+          error: true,
+          logPrint: (obj) {
+            // Custom print untuk dio logs
+            if (kDebugMode) print('🌐 Dio: $obj');
+          },
+        ),
+      );
+    }
   }
 
   Dio get dio => _dio;
-  SupabaseClient get supabaseClient => _supabaseClient;
 }

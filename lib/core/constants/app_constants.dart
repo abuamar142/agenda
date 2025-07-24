@@ -7,13 +7,14 @@ class AppConstants {
 
   // API Endpoints
   static const String baseUrl = 'https://your-api-endpoint.com/api/v1';
-  
+
   // Supabase Configuration (from environment)
   static String get supabaseUrl => EnvConfig.supabaseUrl;
   static String get supabaseAnonKey => EnvConfig.supabaseAnonKey;
 
   // Google Configuration (from environment)
-  static String get googleClientId => EnvConfig.googleClientId;  // Google Calendar API
+  static String get googleClientId =>
+      EnvConfig.googleClientId; // Google Calendar API
   static const String googleCalendarApiUrl =
       'https://www.googleapis.com/calendar/v3';
   static const List<String> googleCalendarScopes = [
