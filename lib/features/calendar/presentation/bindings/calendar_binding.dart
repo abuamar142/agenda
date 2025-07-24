@@ -1,42 +1,21 @@
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../core/network/network_info.dart';
-import '../../data/datasources/calendar_remote_data_source.dart';
-import '../../data/repositories/calendar_repository_impl.dart';
-import '../../domain/repositories/calendar_repository.dart';
-import '../../domain/usecases/get_today_events_usecase.dart';
-import '../../domain/usecases/get_upcoming_events_usecase.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../controllers/calendar_controller.dart';
 
 class CalendarBinding extends Bindings {
   @override
   void dependencies() {
-    // Data Source
-    Get.lazyPut<CalendarRemoteDataSource>(
-      () => CalendarRemoteDataSourceImpl(
-        supabaseClient: Supabase.instance.client,
-      ),
-    );
+    AppLogger.i('📅 CalendarBinding: Initializing dependencies...');
 
-    // Repository
-    Get.lazyPut<CalendarRepository>(
-      () => CalendarRepositoryImpl(
-        remoteDataSource: Get.find<CalendarRemoteDataSource>(),
-        networkInfo: Get.find<NetworkInfo>(),
-      ),
-    );
+    // All dependencies are already registered in DependencyInjection
+    // We just need to ensure CalendarController is available
+    if (!Get.isRegistered<CalendarController>()) {
+      AppLogger.w(
+        '⚠️ CalendarController not found in DI, this should not happen',
+      );
+    }
 
-    // Use Cases
-    Get.lazyPut(() => GetTodayEventsUseCase(Get.find<CalendarRepository>()));
-    Get.lazyPut(() => GetUpcomingEventsUseCase(Get.find<CalendarRepository>()));
-
-    // Controller
-    Get.lazyPut<CalendarController>(
-      () => CalendarController(
-        getTodayEventsUseCase: Get.find<GetTodayEventsUseCase>(),
-        getUpcomingEventsUseCase: Get.find<GetUpcomingEventsUseCase>(),
-      ),
-    );
+    AppLogger.i('✅ CalendarBinding: Dependencies ready from DI');
   }
 }
