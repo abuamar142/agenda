@@ -33,6 +33,7 @@ class AppConstants {
   static const String homeRoute = '/home';
   static const String calendarRoute = '/calendar';
   static const String eventRoute = '/event';
+  static const String eventDetailRoute = '/event-detail';
   static const String templateRoute = '/template';
   static const String settingsRoute = '/settings';
 

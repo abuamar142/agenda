@@ -63,6 +63,13 @@ class AppStrings {
   static const String eventTime = 'Event Time';
   static const String eventLocation = 'Event Location';
   static const String allDay = 'All Day';
+  static const String eventOrganizer = 'Organizer';
+  static const String eventAttendees = 'Attendees';
+  static const String eventDuration = 'Duration';
+  static const String editEvent = 'Edit Event';
+  static const String deleteEvent = 'Delete Event';
+  static const String shareEvent = 'Share Event';
+  static const String addToDeviceCalendar = 'Add to Device Calendar';
 
   // Snackbar Messages
   static const String comingSoon = 'Coming Soon!';

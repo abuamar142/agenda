@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/app_extensions.dart';
 import '../../../../core/themes/app_colors.dart';
@@ -460,7 +461,8 @@ class HomeView extends GetView<HomeController> {
   }
 
   void _showEventDetails(event) {
-    showComingSoonSnackbar(AppStrings.eventDetails);
+    AppLogger.i('🎯 HomeView: Navigating to event detail for: ${event.title}');
+    Get.toNamed(AppConstants.eventDetailRoute, arguments: event);
   }
 
   void _showLogoutDialog() {
