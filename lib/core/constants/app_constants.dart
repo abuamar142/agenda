@@ -1,3 +1,5 @@
+import '../config/env_config.dart';
+
 class AppConstants {
   // App Info
   static const String appName = 'Agenda';
@@ -5,12 +7,13 @@ class AppConstants {
 
   // API Endpoints
   static const String baseUrl = 'https://your-api-endpoint.com/api/v1';
+  
+  // Supabase Configuration (from environment)
+  static String get supabaseUrl => EnvConfig.supabaseUrl;
+  static String get supabaseAnonKey => EnvConfig.supabaseAnonKey;
 
-  // Supabase Configuration
-  static const String supabaseUrl = 'YOUR_SUPABASE_URL';
-  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
-
-  // Google Calendar API
+  // Google Configuration (from environment)
+  static String get googleClientId => EnvConfig.googleClientId;  // Google Calendar API
   static const String googleCalendarApiUrl =
       'https://www.googleapis.com/calendar/v3';
   static const List<String> googleCalendarScopes = [
