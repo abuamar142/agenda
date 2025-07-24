@@ -19,16 +19,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Repository interfaces for authentication and calendar operations
 - Dependency injection setup
 - Environment configuration
+- ✅ Authentication module with Supabase OAuth
+- ✅ Google Sign-In integration
+- ✅ Splash screen with app initialization
+- ✅ User authentication state management
+- ✅ Local data caching with SharedPreferences and Secure Storage
+- ✅ Custom UI widgets (LoadingWidget, CustomElevatedButton)
+- ✅ Auth repository implementation with offline support
+- ✅ Auth use cases (Login, Logout, GetCurrentUser, CheckAuthStatus)
+- ✅ Auth controller with reactive state management
+- ✅ Auth and Splash views with modern UI design
+
+### Fixed
+
+- Fixed deprecated `withOpacity` calls to use `withValues`
+- Added missing `@override` annotations
+- Fixed curly braces in flow control structures
 
 ### TODO
 
-- [ ] Implement authentication with Supabase OAuth
-- [ ] Create authentication views and controllers
+- [ ] ~~Implement authentication with Supabase OAuth~~ ✅ COMPLETED
+- [ ] ~~Create authentication views and controllers~~ ✅ COMPLETED
 - [ ] Implement Google Calendar API integration
 - [ ] Create calendar views and event management
 - [ ] Implement event templates functionality
 - [ ] Add push notifications
-- [ ] Implement offline support
+- [ ] Implement offline support for calendar data
 - [ ] Add unit and integration tests
 
 ## [0.1.0] - 2025-01-24

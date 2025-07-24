@@ -83,12 +83,13 @@ class ValidationUtils {
   // Get event title validation error message
   static String? getEventTitleError(String title) {
     if (title.trim().isEmpty) return 'Event title is required';
-    if (!isValidEventTitle(title))
+    if (!isValidEventTitle(title)) {
       return 'Event title must be at least 3 characters';
+    }
     return null;
   }
 
-  // Get event description validation error message
+    // Get event description validation error message
   static String? getEventDescriptionError(String description) {
     if (!isValidEventDescription(description)) {
       return 'Description must be less than 1000 characters';

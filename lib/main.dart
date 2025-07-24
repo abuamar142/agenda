@@ -10,10 +10,10 @@ import 'core/di/dependency_injection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  
   // Initialize dependencies
-  DependencyInjection.init();
-
+  await DependencyInjection.init();
+  
   // Initialize Supabase
   await Supabase.initialize(
     url: AppConstants.supabaseUrl,
@@ -27,9 +27,7 @@ void main() async {
   );
 
   runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
+}class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override

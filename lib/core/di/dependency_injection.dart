@@ -1,28 +1,21 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:agenda/core/network/network_client.dart';
 import 'package:agenda/core/network/network_info.dart';
 
 class DependencyInjection {
-  static void init() {
+  static Future<void> init() async {
     // Core dependencies
     Get.lazyPut<NetworkClient>(() => NetworkClient(), fenix: true);
     Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(), fenix: true);
 
-    // TODO: Add more dependencies here
-    // Data sources
-    // Get.lazyPut<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(Get.find()));
-    // Get.lazyPut<AuthLocalDataSource>(() => AuthLocalDataSourceImpl());
+    // SharedPreferences
+    final sharedPreferences = await SharedPreferences.getInstance();
+    Get.put<SharedPreferences>(sharedPreferences);
 
-    // Repositories
-    // Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(
-    //   remoteDataSource: Get.find(),
-    //   localDataSource: Get.find(),
-    //   networkInfo: Get.find(),
-    // ));
-
-    // Use cases
-    // Get.lazyPut(() => LoginUseCase(Get.find()));
-    // Get.lazyPut(() => LogoutUseCase(Get.find()));
-    // Get.lazyPut(() => GetCurrentUserUseCase(Get.find()));
+    // TODO: Add more dependencies here when needed
+    // Data sources will be injected via bindings
+    // Repositories will be injected via bindings
+    // Use cases will be injected via bindings
   }
 }
