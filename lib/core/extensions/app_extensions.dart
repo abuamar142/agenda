@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/app_strings.dart';
 import '../themes/app_colors.dart';
 
 // Extension untuk BuildContext
@@ -17,11 +18,6 @@ extension ContextExtensions on BuildContext {
   // Safe area helpers
   EdgeInsets get padding => MediaQuery.of(this).padding;
   EdgeInsets get viewInsets => MediaQuery.of(this).viewInsets;
-
-  // Navigation helpers
-  void pop<T>([T? result]) => Navigator.of(this).pop(result);
-  Future<T?> push<T>(Widget page) =>
-      Navigator.of(this).push<T>(MaterialPageRoute(builder: (_) => page));
 }
 
 // Extension untuk GetxController dan Widget yang menggunakan GetX Snackbar
@@ -39,10 +35,10 @@ extension GetXSnackbarExtensions on Object {
       snackPosition: position,
       duration: duration,
       backgroundColor: AppColors.success,
-      colorText: Colors.white,
+      colorText: AppColors.white,
       icon: const Icon(
         Icons.check_circle_outline,
-        color: Colors.white,
+        color: AppColors.white,
         size: 28,
       ),
       margin: const EdgeInsets.all(16),
@@ -67,8 +63,8 @@ extension GetXSnackbarExtensions on Object {
       snackPosition: position,
       duration: duration,
       backgroundColor: AppColors.error,
-      colorText: Colors.white,
-      icon: const Icon(Icons.error_outline, color: Colors.white, size: 28),
+      colorText: AppColors.white,
+      icon: const Icon(Icons.error_outline, color: AppColors.white, size: 28),
       margin: const EdgeInsets.all(16),
       borderRadius: 8,
       isDismissible: true,
@@ -82,6 +78,7 @@ extension GetXSnackbarExtensions on Object {
   void showWarningSnackbar(
     String message, {
     String? title,
+    IconData? icon,
     Duration duration = const Duration(seconds: 3),
     SnackPosition position = SnackPosition.BOTTOM,
   }) {
@@ -91,10 +88,10 @@ extension GetXSnackbarExtensions on Object {
       snackPosition: position,
       duration: duration,
       backgroundColor: AppColors.warning,
-      colorText: Colors.white,
-      icon: const Icon(
-        Icons.warning_amber_outlined,
-        color: Colors.white,
+      colorText: AppColors.white,
+      icon: Icon(
+        icon ?? Icons.warning_outlined,
+        color: AppColors.white,
         size: 28,
       ),
       margin: const EdgeInsets.all(16),
@@ -119,8 +116,8 @@ extension GetXSnackbarExtensions on Object {
       snackPosition: position,
       duration: duration,
       backgroundColor: AppColors.info,
-      colorText: Colors.white,
-      icon: const Icon(Icons.info_outline, color: Colors.white, size: 28),
+      colorText: AppColors.white,
+      icon: const Icon(Icons.info_outline, color: AppColors.white, size: 28),
       margin: const EdgeInsets.all(16),
       borderRadius: 8,
       isDismissible: true,
@@ -143,13 +140,13 @@ extension GetXSnackbarExtensions on Object {
       snackPosition: position,
       duration: duration,
       backgroundColor: AppColors.primary,
-      colorText: Colors.white,
+      colorText: AppColors.white,
       icon: const SizedBox(
         width: 28,
         height: 28,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
         ),
       ),
       margin: const EdgeInsets.all(16),
@@ -180,7 +177,7 @@ extension GetXSnackbarExtensions on Object {
       snackPosition: position,
       duration: duration,
       backgroundColor: backgroundColor ?? AppColors.primary,
-      colorText: textColor ?? Colors.white,
+      colorText: textColor ?? AppColors.white,
       icon: icon,
       margin: const EdgeInsets.all(16),
       borderRadius: 8,
@@ -192,7 +189,7 @@ extension GetXSnackbarExtensions on Object {
               onPressed: onActionPressed,
               child: Text(
                 actionLabel,
-                style: TextStyle(color: textColor ?? Colors.white),
+                style: TextStyle(color: textColor ?? AppColors.white),
               ),
             )
           : null,
@@ -205,16 +202,16 @@ extension GetXSnackbarExtensions on Object {
   void showComingSoonSnackbar([String? feature]) {
     showInfoSnackbar(
       feature != null
-          ? '$feature will be available soon!'
-          : 'This feature will be available soon!',
-      title: 'Coming Soon',
+          ? '$feature ${AppStrings.featureComingSoon}'
+          : AppStrings.featureComingSoon,
+      title: AppStrings.comingSoon,
     );
   }
 
   void showNetworkErrorSnackbar() {
     showErrorSnackbar(
-      'Please check your internet connection and try again.',
-      title: 'Network Error',
+      AppStrings.checkConnection,
+      title: AppStrings.noInternetConnection,
       duration: const Duration(seconds: 5),
     );
   }

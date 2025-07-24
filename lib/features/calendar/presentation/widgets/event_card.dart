@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/themes/app_colors.dart';
+import '../../../../core/themes/app_text_styles.dart';
 import '../../domain/entities/calendar_event.dart';
 
 class EventCard extends StatelessWidget {
@@ -32,10 +33,7 @@ class EventCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       event.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.eventTitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -57,7 +55,9 @@ class EventCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   event.description!,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: AppTextStyles.eventDescription.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -85,13 +85,15 @@ class EventCard extends StatelessWidget {
         Icon(
           event.isAllDay ? Icons.calendar_today : Icons.access_time,
           size: 16,
-          color: Colors.grey[600],
+          color: AppColors.textSecondary,
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             _getTimeText(),
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: AppTextStyles.eventTime.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
       ],
@@ -101,12 +103,14 @@ class EventCard extends StatelessWidget {
   Widget _buildLocationRow() {
     return Row(
       children: [
-        Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+        const Icon(Icons.location_on, size: 16, color: AppColors.textSecondary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             event.location!,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: AppTextStyles.eventLocation.copyWith(
+              color: AppColors.textSecondary,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -118,12 +122,14 @@ class EventCard extends StatelessWidget {
   Widget _buildAttendeesRow() {
     return Row(
       children: [
-        Icon(Icons.people, size: 16, color: Colors.grey[600]),
+        const Icon(Icons.people, size: 16, color: AppColors.textSecondary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             '${event.attendeeEmails.length} attendee${event.attendeeEmails.length != 1 ? 's' : ''}',
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
       ],
@@ -131,17 +137,13 @@ class EventCard extends StatelessWidget {
   }
 
   Widget _buildMeetingLinkRow() {
-    return const Row(
+    return Row(
       children: [
-        Icon(Icons.video_call, size: 16, color: AppColors.primary),
-        SizedBox(width: 8),
+        const Icon(Icons.video_call, size: 16, color: AppColors.primary),
+        const SizedBox(width: 8),
         Text(
           'Meeting link available',
-          style: TextStyle(
-            fontSize: 14,
-            color: AppColors.primary,
-            fontWeight: FontWeight.w500,
-          ),
+          style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary),
         ),
       ],
     );
@@ -155,13 +157,9 @@ class EventCard extends StatelessWidget {
           color: AppColors.success,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Text(
+        child: Text(
           'ONGOING',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.labelSmall.copyWith(color: AppColors.white),
         ),
       );
     } else if (event.isUpcoming && event.isToday) {
@@ -171,13 +169,9 @@ class EventCard extends StatelessWidget {
           color: AppColors.warning,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Text(
+        child: Text(
           'TODAY',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.labelSmall.copyWith(color: AppColors.white),
         ),
       );
     }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../core/constants/app_strings.dart';
 import '../../core/themes/app_colors.dart';
+import '../../core/themes/app_text_styles.dart';
 import '../../core/utils/app_logger.dart';
 import 'splash_controller.dart';
 
@@ -23,11 +25,11 @@ class SplashView extends GetView<SplashController> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: AppColors.blackWithOpacity10,
                     blurRadius: 10,
                     spreadRadius: 2,
                   ),
@@ -43,26 +45,14 @@ class SplashView extends GetView<SplashController> {
             const SizedBox(height: 30),
 
             // App Name
-            const Text(
-              'Agenda',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 2,
-              ),
-            ),
+            const Text(AppStrings.appName, style: AppTextStyles.appTitle),
 
             const SizedBox(height: 10),
 
             // Subtitle
             Text(
-              'Google Calendar Manager',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white.withValues(alpha: 0.8),
-                fontWeight: FontWeight.w300,
-              ),
+              AppStrings.appSubtitle,
+              style: AppTextStyles.appSubtitleOnDark,
             ),
 
             const SizedBox(height: 50),
@@ -71,7 +61,9 @@ class SplashView extends GetView<SplashController> {
             Obx(
               () => controller.isLoading.value
                   ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.white,
+                      ),
                     )
                   : const SizedBox.shrink(),
             ),

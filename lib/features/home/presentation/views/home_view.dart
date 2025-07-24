@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/app_extensions.dart';
 import '../../../../core/themes/app_colors.dart';
+import '../../../../core/themes/app_text_styles.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -23,7 +25,7 @@ class HomeView extends GetView<HomeController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agenda Calendar'),
+        title: const Text(AppStrings.agendaCalendar),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -38,7 +40,7 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     Icon(Icons.logout, color: AppColors.error),
                     SizedBox(width: 8),
-                    Text('Logout'),
+                    Text(AppStrings.logout),
                   ],
                 ),
               ),
@@ -51,12 +53,12 @@ class HomeView extends GetView<HomeController> {
         try {
           final authController = Get.find<AuthController>();
           if (authController.isLoading) {
-            return const LoadingWidget(message: 'Loading user data...');
+            return const LoadingWidget(message: AppStrings.loadingUserData);
           }
 
           final user = authController.currentUser;
           if (user == null) {
-            return const Center(child: Text('No user data available'));
+            return const Center(child: Text(AppStrings.noUserDataAvailable));
           }
 
           return _buildHomeContent(context, user);
@@ -69,11 +71,11 @@ class HomeView extends GetView<HomeController> {
                 Icon(Icons.home, size: 64, color: AppColors.primary),
                 SizedBox(height: 16),
                 Text(
-                  'Welcome to Agenda!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  AppStrings.welcomeToAgenda,
+                  style: AppTextStyles.welcomeTitle,
                 ),
                 SizedBox(height: 8),
-                Text('Calendar management coming soon...'),
+                Text(AppStrings.calendarManagementComingSoon),
               ],
             ),
           );
@@ -81,10 +83,10 @@ class HomeView extends GetView<HomeController> {
       }),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          showComingSoonSnackbar('Event creation');
+          showComingSoonSnackbar(AppStrings.eventCreation);
         },
         icon: const Icon(Icons.add),
-        label: const Text('New Event'),
+        label: const Text(AppStrings.newEvent),
       ),
     );
   }
@@ -131,10 +133,8 @@ class HomeView extends GetView<HomeController> {
                       user.name?.isNotEmpty == true
                           ? user.name![0].toUpperCase()
                           : user.email[0].toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      style: AppTextStyles.heading3.copyWith(
+                        color: AppColors.white,
                       ),
                     )
                   : null,
@@ -149,14 +149,12 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   Text(
                     user.name?.isNotEmpty == true ? user.name! : 'Welcome!',
-                    style: Get.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: AppTextStyles.userNameText,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     user.email,
-                    style: Get.textTheme.bodyMedium?.copyWith(
+                    style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
                   ),
@@ -167,14 +165,13 @@ class HomeView extends GetView<HomeController> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.1),
+                      color: AppColors.successWithOpacity10,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Authenticated',
-                      style: Get.textTheme.bodySmall?.copyWith(
+                      style: AppTextStyles.labelSmall.copyWith(
                         color: AppColors.success,
-                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -191,12 +188,7 @@ class HomeView extends GetView<HomeController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Quick Actions',
-          style: Get.textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        const Text(AppStrings.quickActions, style: AppTextStyles.sectionTitle),
 
         const SizedBox(height: 16),
 
@@ -205,11 +197,11 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: _buildActionCard(
                 icon: Icons.calendar_today,
-                title: 'View Calendar',
+                title: AppStrings.viewCalendar,
                 subtitle: 'See all events',
                 color: AppColors.primary,
                 onTap: () {
-                  showComingSoonSnackbar('Calendar view');
+                  showComingSoonSnackbar(AppStrings.calendarView);
                 },
               ),
             ),
@@ -219,11 +211,11 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: _buildActionCard(
                 icon: Icons.add_circle,
-                title: 'Create Event',
+                title: AppStrings.createEvent,
                 subtitle: 'Quick create',
                 color: AppColors.success,
                 onTap: () {
-                  showComingSoonSnackbar('Event creation');
+                  showComingSoonSnackbar(AppStrings.eventCreation);
                 },
               ),
             ),
@@ -237,11 +229,11 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: _buildActionCard(
                 icon: Icons.bookmark,
-                title: 'Templates',
+                title: AppStrings.eventTemplates,
                 subtitle: 'Event templates',
                 color: AppColors.warning,
                 onTap: () {
-                  showComingSoonSnackbar('Event templates');
+                  showComingSoonSnackbar(AppStrings.eventTemplates);
                 },
               ),
             ),
@@ -251,11 +243,11 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: _buildActionCard(
                 icon: Icons.settings,
-                title: 'Settings',
+                title: AppStrings.settings,
                 subtitle: 'App settings',
                 color: AppColors.textSecondary,
                 onTap: () {
-                  showComingSoonSnackbar('Settings');
+                  showComingSoonSnackbar(AppStrings.settings);
                 },
               ),
             ),
@@ -285,15 +277,13 @@ class HomeView extends GetView<HomeController> {
               const SizedBox(height: 8),
               Text(
                 title,
-                style: Get.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.cardTitle,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: Get.textTheme.bodySmall?.copyWith(
+                style: AppTextStyles.cardSubtitle.copyWith(
                   color: AppColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
@@ -323,11 +313,9 @@ class HomeView extends GetView<HomeController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Today\'s Events',
-                    style: Get.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const Text(
+                    AppStrings.todaysEvents,
+                    style: AppTextStyles.sectionTitle,
                   ),
                   IconButton(
                     onPressed: () => calendarController.refreshEvents(),
@@ -357,11 +345,9 @@ class HomeView extends GetView<HomeController> {
               children: [
                 Text(
                   calendarController.hasTodayEvents
-                      ? 'Upcoming Events'
+                      ? AppStrings.upcomingEvents
                       : 'Your Events',
-                  style: Get.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.sectionTitle,
                 ),
                 if (!calendarController.hasTodayEvents)
                   IconButton(
@@ -393,7 +379,7 @@ class HomeView extends GetView<HomeController> {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      showComingSoonSnackbar('Full calendar view');
+                      showComingSoonSnackbar(AppStrings.fullCalendarView);
                     },
                     child: Text(
                       'View All Events (${calendarController.upcomingEvents.length})',
@@ -426,8 +412,8 @@ class HomeView extends GetView<HomeController> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No upcoming events',
-              style: Get.textTheme.bodyLarge?.copyWith(
+              AppStrings.noUpcomingEvents,
+              style: AppTextStyles.bodyLarge.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -435,7 +421,7 @@ class HomeView extends GetView<HomeController> {
             Text(
               'Your calendar is clear!\nCreate a new event to get started.',
               textAlign: TextAlign.center,
-              style: Get.textTheme.bodyMedium?.copyWith(
+              style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
@@ -455,7 +441,7 @@ class HomeView extends GetView<HomeController> {
             const SizedBox(height: 16),
             Text(
               'Calendar Unavailable',
-              style: Get.textTheme.bodyLarge?.copyWith(
+              style: AppTextStyles.bodyLarge.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -463,7 +449,7 @@ class HomeView extends GetView<HomeController> {
             Text(
               'Unable to load calendar events.\nPlease check your internet connection and try again.',
               textAlign: TextAlign.center,
-              style: Get.textTheme.bodyMedium?.copyWith(
+              style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
@@ -474,16 +460,19 @@ class HomeView extends GetView<HomeController> {
   }
 
   void _showEventDetails(event) {
-    showComingSoonSnackbar('Event details');
+    showComingSoonSnackbar(AppStrings.eventDetails);
   }
 
   void _showLogoutDialog() {
     Get.dialog(
       AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: const Text(AppStrings.logoutDialogTitle),
+        content: const Text(AppStrings.logoutDialogContent),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(AppStrings.cancel),
+          ),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -491,7 +480,7 @@ class HomeView extends GetView<HomeController> {
               controller.performLogout();
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Logout'),
+            child: const Text(AppStrings.logout),
           ),
         ],
       ),

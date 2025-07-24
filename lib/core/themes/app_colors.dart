@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Base Colors
+  static const Color white = Colors.white;
+  static const Color black = Colors.black;
+  static const MaterialColor blue = Colors.blue;
+  static const Color transparent = Colors.transparent;
+
   // Primary Colors
   static const Color primary = Color(0xFF2196F3);
   static const Color primaryDark = Color(0xFF1976D2);
@@ -20,12 +26,21 @@ class AppColors {
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   static const Color textHint = Color(0xFF9E9E9E);
+  static const Color textOnPrimary = Colors.white;
+  static const Color textOnSecondary = Colors.white;
 
   // Status Colors
   static const Color success = Color(0xFF4CAF50);
   static const Color warning = Color(0xFFFF9800);
   static const Color error = Color(0xFFF44336);
   static const Color info = Color(0xFF2196F3);
+
+  // Opacity Colors
+  static Color blackWithOpacity10 = Colors.black.withValues(alpha: 0.1);
+  static Color whiteWithOpacity70 = Colors.white.withValues(alpha: 0.7);
+  static Color whiteWithOpacity80 = Colors.white.withValues(alpha: 0.8);
+  static Color whiteWithOpacity90 = Colors.white.withValues(alpha: 0.9);
+  static Color successWithOpacity10 = success.withValues(alpha: 0.1);
 
   // Calendar Colors
   static const Color calendarToday = Color(0xFF2196F3);
@@ -39,4 +54,9 @@ class AppColors {
     end: Alignment.bottomRight,
     colors: [primary, primaryDark],
   );
+
+  // Utility Methods
+  static Color withOpacity(Color color, double opacity) {
+    return color.withValues(alpha: opacity);
+  }
 }

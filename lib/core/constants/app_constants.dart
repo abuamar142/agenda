@@ -2,7 +2,6 @@ import '../config/env_config.dart';
 
 class AppConstants {
   // App Info
-  static const String appName = 'Agenda';
   static const String appVersion = '1.0.0';
 
   // API Endpoints
