@@ -1,0 +1,215 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../core/themes/app_colors.dart';
+import '../../domain/entities/calendar_event.dart';
+
+class EventCard extends StatelessWidget {
+  final CalendarEvent event;
+  final VoidCallback? onTap;
+
+  const EventCard({super.key, required this.event, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: _getEventColor(), width: 2),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      event.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  _buildStatusIndicator(),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              _buildTimeRow(),
+
+              if (event.location?.isNotEmpty == true) ...[
+                const SizedBox(height: 4),
+                _buildLocationRow(),
+              ],
+
+              if (event.description?.isNotEmpty == true) ...[
+                const SizedBox(height: 8),
+                Text(
+                  event.description!,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+
+              if (event.attendeeEmails.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                _buildAttendeesRow(),
+              ],
+
+              if (event.meetingLink?.isNotEmpty == true) ...[
+                const SizedBox(height: 8),
+                _buildMeetingLinkRow(),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeRow() {
+    return Row(
+      children: [
+        Icon(
+          event.isAllDay ? Icons.calendar_today : Icons.access_time,
+          size: 16,
+          color: Colors.grey[600],
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            _getTimeText(),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationRow() {
+    return Row(
+      children: [
+        Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            event.location!,
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttendeesRow() {
+    return Row(
+      children: [
+        Icon(Icons.people, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            '${event.attendeeEmails.length} attendee${event.attendeeEmails.length != 1 ? 's' : ''}',
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMeetingLinkRow() {
+    return const Row(
+      children: [
+        Icon(Icons.video_call, size: 16, color: AppColors.primary),
+        SizedBox(width: 8),
+        Text(
+          'Meeting link available',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColors.primary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusIndicator() {
+    if (event.isOngoing) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.success,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          'ONGOING',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    } else if (event.isUpcoming && event.isToday) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: AppColors.warning,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          'TODAY',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  Color _getEventColor() {
+    if (event.isOngoing) {
+      return AppColors.success;
+    } else if (event.isToday) {
+      return AppColors.warning;
+    } else {
+      return AppColors.primary;
+    }
+  }
+
+  String _getTimeText() {
+    if (event.isAllDay) {
+      if (event.startTime.day == event.endTime.day) {
+        return 'All day • ${DateFormat('MMM d').format(event.startTime)}';
+      } else {
+        return 'All day • ${DateFormat('MMM d').format(event.startTime)} - ${DateFormat('MMM d').format(event.endTime)}';
+      }
+    } else {
+      final dateFormat = DateFormat('MMM d');
+      final timeFormat = DateFormat('HH:mm');
+
+      if (event.startTime.day == event.endTime.day) {
+        return '${timeFormat.format(event.startTime)} - ${timeFormat.format(event.endTime)} • ${dateFormat.format(event.startTime)}';
+      } else {
+        return '${dateFormat.format(event.startTime)} ${timeFormat.format(event.startTime)} - ${dateFormat.format(event.endTime)} ${timeFormat.format(event.endTime)}';
+      }
+    }
+  }
+}

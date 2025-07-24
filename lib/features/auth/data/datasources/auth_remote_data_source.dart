@@ -24,6 +24,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         OAuthProvider.google,
         redirectTo: 'com.abuamar.agenda.agenda://auth/callback',
         authScreenLaunchMode: LaunchMode.externalApplication,
+        scopes:
+            'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
       );
 
       if (!response) {

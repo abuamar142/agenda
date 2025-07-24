@@ -6,6 +6,8 @@ import '../../../../core/themes/app_colors.dart';
 import '../../../../core/utils/app_logger.dart';
 import '../../../../shared/widgets/loading_widget.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../calendar/presentation/controllers/calendar_controller.dart';
+import '../../../calendar/presentation/widgets/event_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -79,7 +81,6 @@ class HomeView extends GetView<HomeController> {
       }),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: Navigate to create event
           showComingSoonSnackbar('Event creation');
         },
         icon: const Icon(Icons.add),
@@ -104,8 +105,8 @@ class HomeView extends GetView<HomeController> {
 
           const SizedBox(height: 24),
 
-          // Recent Events (Placeholder)
-          _buildRecentEvents(),
+          // Calendar Events
+          _buildCalendarEvents(),
         ],
       ),
     );
@@ -304,50 +305,176 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildRecentEvents() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Recent Events',
-          style: Get.textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+  Widget _buildCalendarEvents() {
+    // Try to get CalendarController if available
+    try {
+      final calendarController = Get.find<CalendarController>();
 
-        const SizedBox(height: 16),
+      return Obx(() {
+        if (calendarController.isLoading) {
+          return const LoadingWidget(message: 'Loading calendar events...');
+        }
 
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: [
-                const Icon(
-                  Icons.event_note,
-                  size: 48,
-                  color: AppColors.textHint,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Today's Events Section
+            if (calendarController.hasTodayEvents) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Today\'s Events',
+                    style: Get.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => calendarController.refreshEvents(),
+                    icon: calendarController.isRefreshing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.refresh),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ...calendarController.todayEvents.map(
+                (event) => EventCard(
+                  event: event,
+                  onTap: () => _showEventDetails(event),
                 ),
-                const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            // Upcoming Events Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Text(
-                  'No events yet',
-                  style: Get.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
+                  calendarController.hasTodayEvents
+                      ? 'Upcoming Events'
+                      : 'Your Events',
+                  style: Get.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Google Calendar integration coming soon!\nCreate your first event to get started.',
-                  textAlign: TextAlign.center,
-                  style: Get.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
+                if (!calendarController.hasTodayEvents)
+                  IconButton(
+                    onPressed: () => calendarController.refreshEvents(),
+                    icon: calendarController.isRefreshing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.refresh),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            if (calendarController.hasUpcomingEvents) ...[
+              ...calendarController.upcomingEvents
+                  .take(5)
+                  .map(
+                    (event) => EventCard(
+                      event: event,
+                      onTap: () => _showEventDetails(event),
+                    ),
+                  ),
+
+              if (calendarController.upcomingEvents.length > 5) ...[
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      showComingSoonSnackbar('Full calendar view');
+                    },
+                    child: Text(
+                      'View All Events (${calendarController.upcomingEvents.length})',
+                    ),
                   ),
                 ),
               ],
+            ] else ...[
+              _buildEmptyEventsCard(),
+            ],
+          ],
+        );
+      });
+    } catch (e) {
+      // CalendarController not available, show fallback
+      return _buildCalendarUnavailableCard();
+    }
+  }
+
+  Widget _buildEmptyEventsCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.event_available,
+              size: 48,
+              color: AppColors.textHint,
             ),
-          ),
+            const SizedBox(height: 16),
+            Text(
+              'No upcoming events',
+              style: Get.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Your calendar is clear!\nCreate a new event to get started.',
+              textAlign: TextAlign.center,
+              style: Get.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
+  }
+
+  Widget _buildCalendarUnavailableCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            const Icon(Icons.event_busy, size: 48, color: AppColors.textHint),
+            const SizedBox(height: 16),
+            Text(
+              'Calendar Unavailable',
+              style: Get.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Unable to load calendar events.\nPlease check your internet connection and try again.',
+              textAlign: TextAlign.center,
+              style: Get.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEventDetails(event) {
+    showComingSoonSnackbar('Event details');
   }
 
   void _showLogoutDialog() {
