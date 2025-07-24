@@ -24,7 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final userModel = await remoteDataSource.signInWithGoogle();
-        await localDataSource.cacheUser(userModel);
+        // No caching - always require fresh login
         return Right(userModel);
       } on ServerException catch (e) {
         return Left(ServerFailure(e.message));
@@ -59,24 +59,15 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, User?>> getCurrentUser() async {
     try {
-      // Try to get from remote first if connected
+      // Only get from remote - no cache fallback to force fresh login
       if (await networkInfo.isConnected) {
-        try {
-          final remoteUser = await remoteDataSource.getCurrentUser();
-          if (remoteUser != null) {
-            await localDataSource.cacheUser(remoteUser);
-            return Right(remoteUser);
-          }
-        } on ServerException {
-          // If remote fails, fall back to cache
-        }
+        final remoteUser = await remoteDataSource.getCurrentUser();
+        return Right(remoteUser);
+      } else {
+        return const Left(NetworkFailure('No internet connection'));
       }
-
-      // Get from cache
-      final cachedUser = await localDataSource.getCachedUser();
-      return Right(cachedUser);
-    } on CacheException catch (e) {
-      return Left(CacheFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -85,21 +76,16 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, bool>> isSignedIn() async {
     try {
-      // Check remote if connected
+      // Only check remote session - no cache fallback
       if (await networkInfo.isConnected) {
-        try {
-          final isRemoteSignedIn = await remoteDataSource.isSignedIn();
-          return Right(isRemoteSignedIn);
-        } on ServerException {
-          // If remote fails, check cache
-        }
+        final isRemoteSignedIn = await remoteDataSource.isSignedIn();
+        return Right(isRemoteSignedIn);
+      } else {
+        // If no internet, assume not signed in to force login when connection returns
+        return const Right(false);
       }
-
-      // Check if user exists in cache
-      final cachedUser = await localDataSource.getCachedUser();
-      return Right(cachedUser != null);
-    } on CacheException catch (e) {
-      return Left(CacheFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -108,9 +94,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Stream<User?> get authStateChanges {
     return remoteDataSource.authStateChanges.map((userModel) {
-      if (userModel != null) {
-        localDataSource.cacheUser(userModel);
-      } else {
+      // Only clear data on logout, don't cache on login
+      if (userModel == null) {
         localDataSource.clearUserData();
         localDataSource.clearTokens();
       }

@@ -72,7 +72,11 @@ class AuthController extends GetxController with LoggerMixin {
       _isLoading.value = true;
 
       try {
-        logAuth('Starting Google login');
+        logAuth('Starting Google login via browser');
+
+        // Show informative message about browser flow
+        showBrowserLoginInfoSnackbar();
+
         final result = await loginWithGoogleUseCase();
 
         result.fold(

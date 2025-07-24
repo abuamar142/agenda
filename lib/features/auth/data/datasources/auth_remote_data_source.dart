@@ -19,19 +19,48 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      await supabaseClient.auth.signInWithOAuth(
+      // Launch OAuth flow in external browser and wait for callback
+      final response = await supabaseClient.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: 'com.abuamar.agenda.agenda://auth/callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
       );
 
+      if (!response) {
+        throw const ServerException('OAuth flow was cancelled or failed');
+      }
+
+      // Wait for auth state change with timeout
+      await _waitForAuthStateChange();
+
       if (supabaseClient.auth.currentUser == null) {
-        throw const ServerException('Sign in failed');
+        throw const ServerException('Authentication failed - no user found');
       }
 
       return UserModel.fromSupabaseUser(supabaseClient.auth.currentUser!);
+    } on ServerException {
+      rethrow;
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ServerException('Google Sign-In failed: ${e.toString()}');
     }
+  }
+
+  /// Wait for auth state change with timeout
+  Future<void> _waitForAuthStateChange() async {
+    const timeout = Duration(seconds: 30);
+    const checkInterval = Duration(milliseconds: 500);
+
+    final stopwatch = Stopwatch()..start();
+
+    while (stopwatch.elapsed < timeout) {
+      if (supabaseClient.auth.currentUser != null) {
+        return;
+      }
+
+      await Future.delayed(checkInterval);
+    }
+
+    throw const ServerException('Authentication timeout - please try again');
   }
 
   @override

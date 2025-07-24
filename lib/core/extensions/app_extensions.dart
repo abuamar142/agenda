@@ -235,6 +235,14 @@ extension GetXSnackbarExtensions on Object {
     );
   }
 
+  void showBrowserLoginInfoSnackbar() {
+    showInfoSnackbar(
+      'A browser will open for Google authentication. Please complete the login and return to the app.',
+      title: 'Opening Browser',
+      duration: const Duration(seconds: 5),
+    );
+  }
+
   void showValidationErrorSnackbar(String field) {
     showWarningSnackbar(
       'Please check the $field field and try again.',

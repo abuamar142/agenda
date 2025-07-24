@@ -76,7 +76,6 @@ class AuthView extends GetView<AuthController> {
           'Agenda',
           style: Get.textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
           ),
         ),
 
@@ -86,9 +85,7 @@ class AuthView extends GetView<AuthController> {
         Text(
           'Manage your Google Calendar events with ease',
           textAlign: TextAlign.center,
-          style: Get.textTheme.bodyLarge?.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: Get.textTheme.bodyLarge,
         ),
       ],
     );
@@ -102,7 +99,6 @@ class AuthView extends GetView<AuthController> {
           'Welcome Back!',
           style: Get.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
           ),
         ),
 
@@ -121,7 +117,9 @@ class AuthView extends GetView<AuthController> {
         // Google Sign In Button
         Obx(
           () => controller.isLoading
-              ? const LoadingWidget(message: 'Signing in...')
+              ? const LoadingWidget(
+                  message: 'Opening browser for authentication...',
+                )
               : _buildGoogleSignInButton(),
         ),
       ],
