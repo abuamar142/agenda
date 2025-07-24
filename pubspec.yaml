@@ -1,0 +1,52 @@
+name: agenda
+description: "A Flutter application for managing Google Calendar events with OAuth authentication via Supabase."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  get: ^4.7.2
+  
+  # HTTP & Network
+  http: ^1.4.0
+  dio: ^5.4.3
+  
+  # Authentication & OAuth
+  supabase_flutter: ^2.5.2
+  google_sign_in: ^6.1.6
+  
+  # Google Calendar API
+  googleapis: ^13.1.0
+  googleapis_auth: ^1.4.1
+  
+  # Local Storage & Security
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+  
+  # Date & Time
+  intl: ^0.19.0
+  
+  # UI Components
+  flutter_svg: ^2.0.10
+  cached_network_image: ^3.3.1
+  
+  # Utilities
+  dartz: ^0.10.1
+  equatable: ^2.0.5
+  uuid: ^4.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
